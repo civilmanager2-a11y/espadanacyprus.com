@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESPADANA — کارخانه تولید پوند | سرمایه‌گذاری ملکی قبرس شمالی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--fire:#e84a0e;--fire-glow:#ff6b2c;--fire-deep:#c73e08;
+--ember:#ff9040;--gold:#ffc857;
+--dark:#0a0a0a;--dark2:#111;--dark3:#1a1a1a;
+--cream:#faf5ef;--text:#f0e6d6;--muted:#8a7e70;
+--font-fa:'Vazirmatn',sans-serif;--font-en:'Space Grotesk',sans-serif;
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:var(--font-fa);background:var(--dark);color:var(--text);overflow-x:hidden;direction:rtl;line-height:1.8}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+img{max-width:100%;display:block}
+.en{font-family:var(--font-en);direction:ltr;display:inline-block}
+
+/* ═══ LOADER ═══ */
+#loader{position:fixed;inset:0;z-index:9999;background:var(--dark);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s,visibility .8s}
+#loader.done{opacity:0;visibility:hidden;pointer-events:none}
+.load-logo{font-family:var(--font-en);font-size:2.8rem;font-weight:900;color:var(--fire);letter-spacing:6px;margin-bottom:24px;text-shadow:0 0 60px rgba(232,74,14,.5)}
+.load-track{width:220px;height:3px;background:#222;border-radius:2px;overflow:hidden}
+.load-fill{height:100%;width:0;background:linear-gradient(90deg,var(--fire),var(--gold));border-radius:2px;transition:width .25s}
+.load-text{color:var(--muted);font-size:.82rem;margin-top:16px}
+
+/* ═══ BG VIDEO ═══ */
+#bg-video{position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%;object-fit:cover;opacity:.62;filter:saturate(1.05)}
+#bg-video-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(160deg,rgba(10,10,10,.45),rgba(10,10,10,.62) 55%,rgba(10,10,10,.85))}
+
+/* ═══ PROGRESS BAR ═══ */
+#scroll-progress{position:fixed;top:0;right:0;z-index:200;width:3px;height:0%;background:linear-gradient(to bottom,var(--fire),var(--gold));transition:height .05s}
+
+/* ═══ SOUND BTN ═══ */
+#snd-btn{position:fixed;bottom:28px;left:28px;z-index:200;width:44px;height:44px;border-radius:50%;background:rgba(20,20,20,.85);border:1px solid rgba(255,255,255,.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;backdrop-filter:blur(8px)}
+#snd-btn:hover{border-color:var(--fire);background:rgba(232,74,14,.15)}
+#snd-btn svg{width:20px;height:20px;fill:currentColor}
+
+/* ═══ NAV ═══ */
+.topnav{position:fixed;top:0;right:0;left:0;z-index:150;padding:18px 36px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(10,10,10,.85),transparent);transition:background .4s}
+.topnav.scrolled{background:rgba(10,10,10,.95);backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.15rem;color:#fff}
+.brand svg{width:38px;height:38px;flex-shrink:0}
+.brand small{display:block;font-family:var(--font-en);font-size:.65rem;font-weight:500;color:var(--fire);letter-spacing:3px;margin-top:-2px}
+.desk-links{display:flex;gap:24px}
+.desk-links a{color:#ccc;font-size:.88rem;font-weight:500;padding:6px 14px;border-radius:8px;transition:all .3s}
+.desk-links a:hover,.desk-links a.active{color:#fff;background:rgba(232,74,14,.1)}
+.nav-cta{padding:10px 28px;border-radius:30px;background:var(--fire);color:#fff;font-size:.85rem;font-weight:700;border:none;cursor:pointer;transition:all .3s}
+.nav-cta:hover{background:var(--fire-glow);transform:scale(1.05)}
+.ham{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px}
+.ham span{width:26px;height:2.5px;background:#fff;border-radius:2px;transition:all .3s}
+.ham.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.ham.open span:nth-child(2){opacity:0}
+.ham.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+.mob-menu{display:none;position:fixed;inset:0;z-index:140;background:rgba(10,10,10,.98);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.mob-menu.open{display:flex}
+.mob-menu a{color:#ddd;font-size:1.2rem;font-weight:600;padding:10px 20px;border-radius:10px;transition:all .3s}
+.mob-menu a:hover{color:var(--fire);background:rgba(232,74,14,.08)}
+
+/* ═══ SECTIONS ═══ */
+.sec{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.sec-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+.sec-bg img{width:100%;height:100%;object-fit:cover;transition:transform 10s ease-out;transform:scale(1.18)}
+.sec.vis .sec-bg img{transform:scale(1.0)}
+.sec-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,10,.75) 0%,rgba(10,10,10,.3) 40%,rgba(10,10,10,.88) 100%)}
+
+.inner{position:relative;z-index:2;max-width:920px;padding:80px 32px;text-align:center;width:100%}
+.inner-wide{max-width:1200px}
+
+.tag{display:inline-flex;align-items:center;gap:8px;background:rgba(232,74,14,.12);border:1px solid rgba(232,74,14,.25);color:var(--fire-glow);padding:8px 22px;border-radius:30px;font-size:.78rem;font-weight:600;margin-bottom:28px}
+h1,h2{font-weight:900;line-height:1.35;margin-bottom:18px}
+h1{font-size:clamp(2.2rem,5.5vw,4rem)}
+h2{font-size:clamp(1.8rem,4vw,2.8rem)}
+.hi{color:var(--fire);text-shadow:0 0 40px rgba(232,74,14,.35)}
+.sub{color:#b0a898;font-size:clamp(.92rem,1.2vw,1.1rem);line-height:2;max-width:680px;margin:0 auto 32px}
+
+.stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;margin:40px 0}
+.stats .it{text-align:center}
+.stats .n{font-family:var(--font-en);font-size:clamp(2rem,4vw,3.2rem);font-weight:700;color:var(--fire);text-shadow:0 0 30px rgba(232,74,14,.25);display:block;line-height:1.1}
+.stats .l{color:var(--muted);font-size:.82rem;margin-top:6px}
+
+.btn-f{display:inline-flex;align-items:center;gap:8px;padding:16px 40px;border-radius:60px;background:linear-gradient(135deg,var(--fire),var(--fire-deep));color:#fff;font-weight:700;font-size:1rem;border:none;cursor:pointer;box-shadow:0 8px 32px rgba(232,74,14,.4);transition:all .3s;font-family:var(--font-fa)}
+.btn-f:hover{transform:translateY(-3px);box-shadow:0 14px 48px rgba(232,74,14,.55);background:linear-gradient(135deg,var(--fire-glow),var(--fire))}
+.btn-o{display:inline-flex;align-items:center;gap:8px;padding:14px 36px;border-radius:60px;background:transparent;border:2px solid var(--fire);color:var(--fire);font-weight:600;font-size:.95rem;cursor:pointer;transition:all .3s;font-family:var(--font-fa)}
+.btn-o:hover{background:var(--fire);color:#fff}
+
+/* Scroll hint */
+.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:8px}
+.scroll-hint span{color:var(--muted);font-size:.75rem}
+.s-mouse{width:22px;height:36px;border:2px solid rgba(255,255,255,.25);border-radius:11px;position:relative}
+.s-mouse::after{content:'';width:3px;height:7px;background:var(--fire);border-radius:2px;position:absolute;top:6px;left:50%;transform:translateX(-50%);animation:sdot 1.6s infinite}
+@keyframes sdot{0%{opacity:1;top:6px}100%{opacity:0;top:20px}}
+
+/* ═══ SPLIT ═══ */
+.split{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;align-items:center}
+.split-img{position:relative;height:100%;overflow:hidden}
+.split-img img{width:100%;height:100%;object-fit:cover;transition:transform 8s ease-out;transform:scale(1.12)}
+.sec.vis .split-img img{transform:scale(1)}
+.split-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to left,rgba(10,10,10,.95) 0%,transparent 55%);z-index:2;pointer-events:none}
+/* Video in split */
+.split-video{position:relative;overflow:hidden}
+.split-video iframe{position:absolute;top:50%;left:50%;width:180%;height:180%;transform:translate(-50%,-50%);border:none;pointer-events:none;z-index:1}
+.split-txt{padding:60px 64px;max-width:620px}
+.split-txt h2{text-align:right;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.95),0 6px 28px rgba(0,0,0,.75),0 0 46px rgba(255,200,87,.3)}
+.split-txt h2 .hi{color:var(--gold);text-shadow:0 2px 6px rgba(0,0,0,.95),0 0 30px rgba(255,200,87,.65),0 0 60px rgba(255,200,87,.35)}
+.split-txt p{color:#f4efe4;font-size:.93rem;line-height:2;margin-bottom:24px;text-align:right;text-shadow:0 1px 4px rgba(0,0,0,.9),0 4px 18px rgba(0,0,0,.65)}
+.split-txt .tag{background:rgba(10,8,6,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-shadow:0 1px 3px rgba(0,0,0,.85)}
+.split-txt .stats .n{text-shadow:0 2px 6px rgba(0,0,0,.95),0 0 34px rgba(255,200,87,.55)}
+.split-txt .stats .l{color:#e9e1d3;text-shadow:0 1px 3px rgba(0,0,0,.9)}
+
+/* ═══ CARDS ═══ */
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto;padding:0 24px}
+.crd{background:rgba(22,22,22,.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.05);border-radius:20px;padding:34px 26px;text-align:center;transition:all .4s}
+.crd:hover{border-color:rgba(232,74,14,.25);transform:translateY(-8px);box-shadow:0 20px 60px rgba(232,74,14,.12)}
+.crd-ic{width:60px;height:60px;background:rgba(232,74,14,.1);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.crd-ic svg{width:26px;height:26px;fill:var(--fire)}
+.crd h3{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:8px}
+.crd p{color:var(--muted);font-size:.83rem;line-height:1.8}
+
+/* Property cards */
+.pcrd{text-align:right;padding:0;overflow:hidden}
+.pcrd-img{height:210px;overflow:hidden}
+.pcrd-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.pcrd:hover .pcrd-img img{transform:scale(1.08)}
+.pcrd-body{padding:22px}
+.pcrd-code{font-size:.72rem;color:var(--fire);font-family:var(--font-en);font-weight:600;margin-bottom:6px}
+.pcrd h3{font-size:.98rem;color:#fff;margin-bottom:8px;font-weight:700}
+.pcrd-meta{display:flex;gap:14px;color:var(--muted);font-size:.78rem;margin-bottom:14px}
+.pcrd-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.06);padding-top:14px}
+.pcrd-price{font-family:var(--font-en);font-size:1.08rem;font-weight:700;color:var(--fire)}
+.pcrd-link{color:var(--fire);font-size:.8rem;font-weight:600}
+
+/* ═══ STEPS ═══ */
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;max-width:1100px;margin:0 auto;padding:0 24px}
+.sbox{background:rgba(18,18,18,.9);border:1px solid rgba(255,255,255,.04);border-radius:20px;padding:34px 22px;text-align:center}
+.sbox-n{font-family:var(--font-en);font-size:3.2rem;font-weight:800;background:linear-gradient(135deg,var(--fire),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:14px}
+.sbox h3{font-size:.98rem;font-weight:700;color:#fff;margin-bottom:8px}
+.sbox p{color:var(--muted);font-size:.8rem;line-height:1.8}
+
+/* ═══ PARTNERS ═══ */
+.partners{display:flex;gap:50px;align-items:center;justify-content:center;flex-wrap:wrap;padding:20px;opacity:.6}
+.partners a{font-family:var(--font-en);font-size:.95rem;font-weight:600;color:#fff;letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:4px;transition:all .3s}
+.partners a:hover{opacity:1;color:var(--fire-glow);border-color:var(--fire-glow)}
+
+/* ═══ TESTIMONIALS ═══ */
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto;padding:0 24px}
+.tc{background:rgba(18,18,18,.85);border:1px solid rgba(255,255,255,.05);border-radius:20px;padding:28px;text-align:right}
+.tc-stars{color:var(--fire);font-size:.88rem;margin-bottom:10px;letter-spacing:2px}
+.tc-q{color:#c0b8a8;font-size:.88rem;line-height:1.9;margin-bottom:18px}
+.tc-a{display:flex;align-items:center;gap:12px}
+.tc-av{width:42px;height:42px;border-radius:50%;background:rgba(232,74,14,.12);display:flex;align-items:center;justify-content:center;color:var(--fire);font-weight:700;font-size:1rem;flex-shrink:0}
+.tc-nm{font-weight:700;font-size:.86rem;color:#fff}
+.tc-rl{font-size:.73rem;color:var(--muted)}
+
+/* ═══ REGION BOXES ═══ */
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}
+.rbox{background:rgba(10,7,5,.6);border:1px solid rgba(232,74,14,.2);padding:18px 16px;border-radius:14px;text-align:right;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.rbox strong{display:block;font-size:.93rem;margin-bottom:4px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 22px rgba(255,200,87,.3)}
+.rbox span{color:#e9e1d3;font-size:.76rem;line-height:1.6;text-shadow:0 1px 3px rgba(0,0,0,.85)}
+
+/* ═══ FOOTER ═══ */
+.foot{background:#060606;padding:60px 0 0;border-top:1px solid rgba(255,255,255,.04)}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px;max-width:1200px;margin:0 auto;padding:0 36px 40px;border-bottom:1px solid rgba(255,255,255,.05)}
+.foot-brand p{color:#e9e3d8;font-size:.83rem;line-height:1.9;margin-top:14px;text-shadow:0 0 18px rgba(255,200,87,.12)}
+.foot h4{font-size:.9rem;font-weight:700;margin-bottom:16px;color:#fff;text-shadow:0 0 20px rgba(255,200,87,.2)}
+.foot ul li{margin-bottom:8px}
+.foot ul a{color:#e9e3d8;font-size:.83rem;transition:color .3s;text-shadow:0 0 16px rgba(255,200,87,.12)}
+.foot ul a:hover{color:var(--gold);text-shadow:0 0 20px rgba(255,200,87,.5)}
+.foot-ct p{color:#e9e3d8;font-size:.83rem;margin-bottom:8px;display:flex;align-items:center;gap:8px;text-shadow:0 0 16px rgba(255,200,87,.12)}
+.foot-ct .en{color:var(--gold);font-weight:600;text-shadow:0 0 18px rgba(255,200,87,.35)}
+.foot-bot{max-width:1200px;margin:0 auto;padding:18px 36px;text-align:center;color:#a89f92;font-size:.76rem}
+
+/* ═══ GLOW FX ═══ */
+.glow{position:absolute;width:450px;height:450px;background:radial-gradient(circle,rgba(232,74,14,.1),transparent 70%);border-radius:50%;pointer-events:none;z-index:0}
+
+/* ═══ REVEAL ═══ */
+.ru{opacity:0;transform:translateY(50px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.ru.v{opacity:1;transform:translateY(0)}
+.rl{opacity:0;transform:translateX(-60px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.rl.v{opacity:1;transform:translateX(0)}
+.rr{opacity:0;transform:translateX(60px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.rr.v{opacity:1;transform:translateX(0)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1024px){
+.cgrid,.tgrid{grid-template-columns:repeat(2,1fr)}
+.sgrid{grid-template-columns:repeat(2,1fr)}
+.foot-grid{grid-template-columns:repeat(2,1fr)}
+.split{grid-template-columns:1fr}
+.split-img{height:50vh}
+.split-img::after{background:linear-gradient(to top,rgba(10,10,10,.95) 0%,transparent 55%)}
+.split-txt{padding:40px 28px;max-width:100%}
+}
+@media(max-width:768px){
+.desk-links,.nav-cta{display:none}
+.ham{display:flex}
+.topnav{padding:14px 18px}
+.cgrid,.tgrid,.sgrid{grid-template-columns:1fr}
+.foot-grid{grid-template-columns:1fr}
+.inner{padding:60px 18px}
+.stats{gap:24px}
+.partners{gap:28px}
+.rgrid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+.stats{flex-direction:column;gap:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="load-logo">ESPADANA</div>
+  <div class="load-track"><div class="load-fill" id="lb"></div></div>
+  <p class="load-text">در حال بارگذاری تجربه...</p>
+</div>
+
+<!-- BG VIDEO -->
+<video id="bg-video" autoplay muted loop playsinline preload="auto">
+  <source src="assets/video/hero-bg.mp4" type="video/mp4">
+</video>
+<div id="bg-video-overlay"></div>
+
+<!-- PROGRESS -->
+<div id="scroll-progress"></div>
+
+<!-- SOUND -->
+<button id="snd-btn" aria-label="صدا">
+  <svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+</button>
+
+<!-- NAV -->
+<nav class="topnav" id="topnav">
+  <a href="#hero" class="brand">
+    <svg viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#e84a0e"/><path d="M10 28V14l10-6 10 6v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 28v-8h8v8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="16" r="2" fill="#fff"/></svg>
+    <div>اسپادانا<small>ESPADANA</small></div>
+  </a>
+  <div class="desk-links">
+    <a href="#hero">خانه</a>
+    <a href="#why">چرا قبرس</a>
+    <a href="#factory">کارخانه پوند</a>
+    <a href="#regions">مناطق</a>
+    <a href="#steps-s">مراحل</a>
+    <a href="#reviews">نظرات</a>
+  </div>
+  <a href="contact.html" class="nav-cta">درخواست مشاوره</a>
+  <button class="ham" id="ham"><span></span><span></span><span></span></button>
+</nav>
+<div class="mob-menu" id="mob">
+  <a href="#hero" class="mob-l">خانه</a>
+  <a href="#why" class="mob-l">چرا قبرس</a>
+  <a href="#factory" class="mob-l">کارخانه پوند</a>
+  <a href="#regions" class="mob-l">مناطق</a>
+  <a href="#steps-s" class="mob-l">مراحل</a>
+  <a href="#reviews" class="mob-l">نظرات</a>
+  <a href="contact.html" class="mob-l" style="color:var(--fire)">درخواست مشاوره</a>
+  <div style="color:var(--fire);font-family:var(--font-en);font-weight:600;direction:ltr;margin-top:10px">۰۹۱۲۲۴۰۰۱۳۸</div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CONTENT SECTIONS
+     ════════════════════════════════════════════ -->
+
+<!-- 1 ▸ HERO -->
+<section class="sec" id="hero">
+  <div class="sec-bg"><img src="https://images.pexels.com/photos/12861106/pexels-photo-12861106.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=2000" alt="بندر کیرنیا"></div>
+  <div class="glow" style="top:-80px;right:15%"></div>
+  <div class="inner">
+    <div class="tag ru">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7v15h20V7L12 2z"/></svg>
+      پلتفرم سرمایه‌گذاری ملکی قبرس شمالی
+    </div>
+    <h1 class="ru"><span class="hi">کارخانه تولید پوند</span><br>جایی که ملک به سرمایه تبدیل می‌شود</h1>
+    <p class="sub ru">اسپادانا تنها پلتفرم ایرانی با حضور دائمی در قبرس شمالی است. ما ملک نمی‌فروشیم — آینده مالی شما را طراحی می‌کنیم. با بازدهی سالانه بالای <span class="en" style="color:var(--fire)">20%</span> در بازار املاک مدیترانه.</p>
+    <div class="stats ru">
+      <div class="it"><span class="n" data-to="350">0</span><span class="l">پرونده موفق</span></div>
+      <div class="it"><span class="n">£8M+</span><span class="l">حجم سرمایه‌گذاری</span></div>
+      <div class="it"><span class="n" data-to="98">0</span><span class="l">رضایت مشتریان %</span></div>
+      <div class="it"><span class="n" data-to="8">0</span><span class="l">سال تجربه</span></div>
+    </div>
+    <div class="ru" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      <a href="properties.html" class="btn-f">مشاهده پروژه‌ها ←</a>
+      <a href="contact.html" class="btn-o">مشاوره رایگان</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><div class="s-mouse"></div><span>اسکرول کنید</span></div>
+</section>
+
+<!-- 2 ▸ WHY -->
+<section class="sec" id="why">
+  <div class="sec-bg"><img src="https://images.pexels.com/photos/33577898/pexels-photo-33577898.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=2000" alt="بندرگاه مدیترانه"></div>
+  <div class="inner inner-wide">
+    <div class="tag ru">جزیره فرصت‌ها</div>
+    <h2 class="ru">چرا <span class="hi">قبرس شمالی</span> کارخانه تولید ثروت است؟</h2>
+    <p class="sub ru">قبرس شمالی با ترکیبی بی‌نظیر از مزایای مالیاتی، قوانین مالکیت آزاد، و رشد انفجاری بازار املاک، به مقصد شماره یک سرمایه‌گذاران هوشمند خاورمیانه تبدیل شده است.</p>
+    <div class="cgrid" style="margin-top:44px">
+      <div class="crd ru">
+        <div class="crd-ic"><svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg></div>
+        <h3>مالکیت کامل خارجیان</h3>
+        <p>سند مالکیت رسمی به نام شما صادر می‌شود. بدون محدودیت تابعیتی و با ضمانت حقوقی کامل.</p>
+      </div>
+      <div class="crd ru">
+        <div class="crd-ic"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></div>
+        <h3>مالیات نزدیک به صفر</h3>
+        <p>بدون مالیات سالانه. بدون مالیات بر ارث. مالیات انتقال بسیار پایین. بهشت مالیاتی واقعی.</p>
+      </div>
+      <div class="crd ru">
+        <div class="crd-ic"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg></div>
+        <h3>اقامت</h3>
+        <p>خرید ملک = دریافت اقامت دائم. دروازه‌ای رسمی به سوی اروپا و سفر بدون ویزا.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 ▸ POUND FACTORY (Split) -->
+<section class="sec split" id="factory">
+  <div class="split-img split-video">
+    <iframe src="https://www.youtube.com/embed/58Q8Gbmx3-0?autoplay=1&mute=1&loop=1&playlist=58Q8Gbmx3-0&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1" title="Counting British Pounds" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="split-txt">
+    <div class="tag rl">مدل انحصاری اسپادانا</div>
+    <h2 class="rl"><span class="hi">کارخانه تولید پوند</span> چیست؟</h2>
+    <p class="rl">ما فقط ملک نمی‌فروشیم. اسپادانا یک سیستم هوشمند سرمایه‌گذاری ملکی ساخته که مثل یک کارخانه، سرمایه شما را به جریان درآمد پوندی تبدیل می‌کند.</p>
+    <p class="rl">با انتخاب پروژه‌هایی که پتانسیل رشد قیمت و درآمد اجاره‌ای بالا دارند، مدیریت حرفه‌ای اجاره، و پشتیبانی حقوقی کامل — شما فقط تماشا می‌کنید که سرمایه‌تان رشد کند.</p>
+    <div class="stats rl" style="justify-content:flex-start">
+      <div class="it"><span class="n">20%+</span><span class="l">بازدهی سالانه</span></div>
+      <div class="it"><span class="n">£850</span><span class="l">درآمد ماهانه اجاره</span></div>
+    </div>
+    <a href="contact.html" class="btn-f rl">شروع سرمایه‌گذاری</a>
+  </div>
+</section>
+
+<!-- 4 ▸ REGIONS (Split Reverse) -->
+<section class="sec split" id="regions" style="direction:ltr">
+  <div class="split-img"><img src="https://images.pexels.com/photos/29702290/pexels-photo-29702290.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=1000" alt="استخر بی‌نهایت مدیترانه"></div>
+  <div class="split-txt" style="direction:rtl">
+    <div class="tag rr">۴ منطقه استراتژیک</div>
+    <h2 class="rr">مناطق طلایی <span class="hi">قبرس شمالی</span></h2>
+    <p class="rr">هر منطقه در قبرس شمالی داستان خودش را دارد. ما در ۴ منطقه استراتژیک فعالیت می‌کنیم.</p>
+    <div class="rgrid rr">
+      <div class="rbox"><strong>🏰 کیرنیا (گیرنه)</strong><span>قلب تاریخی. بالاترین تقاضای گردشگری و اجاره</span></div>
+      <div class="rbox"><strong>🏖️ اسکله (لانگ‌بیچ)</strong><span>ساحل طلایی. پروژه‌های مدرن و رشد سریع قیمت</span></div>
+      <div class="rbox"><strong>🏛️ فاماگوستا (سالامیس)</strong><span>شهر دانشگاهی. اجاره‌داری پایدار و قیمت مناسب</span></div>
+      <div class="rbox"><strong>🏙️ نیکوزیا (لفکوشا)</strong><span>پایتخت. مرکز تجاری و اداری با تقاضای بالا</span></div>
+    </div>
+    <a href="properties.html" class="btn-f rr">مشاهده پروژه‌ها ←</a>
+  </div>
+</section>
+
+<!-- 5 ▸ PROJECTS -->
+<section class="sec" id="projects" style="padding:100px 0">
+  <div class="sec-bg"><img src="https://images.pexels.com/photos/31817160/pexels-photo-31817160.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=2000" alt="ویلای لوکس" style="opacity:.12"></div>
+  <div class="inner inner-wide">
+    <div class="tag ru">پروژه‌های منتخب</div>
+    <h2 class="ru">بهترین فرصت‌های <span class="hi">سرمایه‌گذاری</span></h2>
+    <p class="sub ru">هر پروژه‌ای که معرفی می‌کنیم، شخصاً بازدید شده و قرارداد نمایندگی رسمی دارد.</p>
+    <div class="cgrid" style="margin-top:36px">
+      <div class="crd pcrd ru">
+        <div class="pcrd-img"><img src="https://images.pexels.com/photos/28054849/pexels-photo-28054849.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600" alt="ویلای سنگی"></div>
+        <div class="pcrd-body">
+          <div class="pcrd-code">ESP-002</div>
+          <h3>ویلای ساحلی سانست هیلز</h3>
+          <div class="pcrd-meta"><span>کیرنیا</span><span>۴ خواب</span><span class="en">220m²</span></div>
+          <div class="pcrd-foot"><span class="pcrd-price">€385,000</span><a href="contact.html" class="pcrd-link">جزئیات ←</a></div>
+        </div>
+      </div>
+      <div class="crd pcrd ru">
+        <div class="pcrd-img"><img src="https://images.pexels.com/photos/20975726/pexels-photo-20975726.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600" alt="ویلا با استخر"></div>
+        <div class="pcrd-body">
+          <div class="pcrd-code">ESP-004</div>
+          <h3>پروژه گلدن پالم — دوبلکس لوکس</h3>
+          <div class="pcrd-meta"><span>فاماگوستا</span><span>۳ خواب</span><span class="en">140m²</span></div>
+          <div class="pcrd-foot"><span class="pcrd-price">€195,000</span><a href="contact.html" class="pcrd-link">جزئیات ←</a></div>
+        </div>
+      </div>
+      <div class="crd pcrd ru">
+        <div class="pcrd-img"><img src="https://images.pexels.com/photos/19075385/pexels-photo-19075385.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=400&w=600" alt="ویلا ساحلی"></div>
+        <div class="pcrd-body">
+          <div class="pcrd-code">ESP-009</div>
+          <h3>ویلای لوکس ساحلی — دید ۱۸۰ درجه</h3>
+          <div class="pcrd-meta"><span>اسکله</span><span>۴ خواب</span><span class="en">260m²</span></div>
+          <div class="pcrd-foot"><span class="pcrd-price">€450,000</span><a href="contact.html" class="pcrd-link">جزئیات ←</a></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:36px" class="ru"><a href="properties.html" class="btn-o">مشاهده تمام پروژه‌ها ←</a></div>
+  </div>
+</section>
+
+<!-- 6 ▸ STEPS -->
+<section class="sec" id="steps-s" style="background:#0d0d0d;padding:100px 0">
+  <div class="inner inner-wide">
+    <div class="tag ru">از رؤیا تا کلید</div>
+    <h2 class="ru">مراحل همکاری با <span class="hi">اسپادانا</span></h2>
+    <p class="sub ru">چهار گام ساده تا تبدیل شدن به مالک ملک در ساحل مدیترانه</p>
+    <div class="sgrid" style="margin-top:44px">
+      <div class="sbox ru"><div class="sbox-n">01</div><h3>مشاوره تخصصی</h3><p>بررسی اهداف سرمایه‌گذاری، بودجه و ترجیحات شما. پیشنهاد بهترین پروژه‌ها.</p></div>
+      <div class="sbox ru"><div class="sbox-n">02</div><h3>بازدید VIP</h3><p>سفر برنامه‌ریزی‌شده به قبرس شمالی. بازدید حضوری با راهنمای فارسی‌زبان.</p></div>
+      <div class="sbox ru"><div class="sbox-n">03</div><h3>قرارداد و انتقال</h3><p>تنظیم قرارداد رسمی با وکیل مستقل. بررسی حقوقی کامل. اقساط منعطف.</p></div>
+      <div class="sbox ru"><div class="sbox-n">04</div><h3>دریافت کلید</h3><p>سند مالکیت، مشاوره اقامت، مدیریت اجاره و پشتیبانی دائمی.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 ▸ PARTNERS -->
+<section class="sec" style="min-height:auto;padding:50px 0;background:var(--dark);border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)">
+  <div class="inner inner-wide">
+    <p style="color:var(--muted);font-size:.8rem;text-align:center;margin-bottom:18px">منابع و سایت‌های رفرنس بازار املاک قبرس شمالی</p>
+    <div class="partners">
+      <a href="https://www.hangiev.com/" target="_blank" rel="noopener">HANGIEV.COM</a>
+      <a href="https://tekce.com/" target="_blank" rel="noopener">TEKCE.COM</a>
+      <a href="https://www.101evler.com/" target="_blank" rel="noopener">101EVLER.COM</a>
+    </div>
+  </div>
+</section>
+
+<!-- 8 ▸ TESTIMONIALS -->
+<section class="sec" id="reviews" style="padding:100px 0;background:#0a0a0a">
+  <div class="sec-bg"><img src="https://images.pexels.com/photos/14909610/pexels-photo-14909610.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=2000" alt="مارینا" style="opacity:.06"></div>
+  <div class="inner inner-wide">
+    <div class="tag ru">صدای مشتریان</div>
+    <h2 class="ru">آن‌ها به <span class="hi">اسپادانا</span> اعتماد کردند</h2>
+    <p class="sub ru">بیش از ۳۵۰ خانواده ایرانی، داستان موفقیت خودشان را دارند</p>
+    <div class="tgrid" style="margin-top:36px">
+      <div class="tc ru">
+        <div class="tc-stars">★★★★★</div>
+        <p class="tc-q">«کارخانه تولید پوند واقعاً اسم درستی بود! آپارتمانی که در لانگ‌بیچ خریدم، ماهانه ۹۰۰ پوند درآمد اجاره‌ای دارد. بهتر از هر بانک و بورسی!»</p>
+        <div class="tc-a"><div class="tc-av">م‌ر</div><div><div class="tc-nm">محمدرضا احمدی</div><div class="tc-rl">سرمایه‌گذار — لانگ‌بیچ ۱۴۰۴</div></div></div>
+      </div>
+      <div class="tc ru">
+        <div class="tc-stars">★★★★★</div>
+        <p class="tc-q">«صداقت و شفافیت تیم اسپادانا بی‌نظیر بود. آقای فرمان‌فرمایان شخصاً تمام مراحل خرید ویلای ما را مدیریت کرد. ویلای رؤیایی کنار دریا!»</p>
+        <div class="tc-a"><div class="tc-av">ن‌ح</div><div><div class="tc-nm">نسرین حکمت‌جو</div><div class="tc-rl">خریدار ویلا — کیرنیا ۱۴۰۳</div></div></div>
+      </div>
+      <div class="tc ru">
+        <div class="tc-stars">★★★★★</div>
+        <p class="tc-q">«فکر می‌کردم سرمایه‌گذاری خارجی فقط برای میلیونرهاست. اسپادانا ثابت کرد با ۶۰ هزار یورو هم می‌شود شروع کرد و درآمد پوندی داشت.»</p>
+        <div class="tc-a"><div class="tc-av">ع‌ک</div><div><div class="tc-nm">علی کریمی‌نژاد</div><div class="tc-rl">سرمایه‌گذار — فاماگوستا ۱۴۰۳</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 ▸ FINAL CTA -->
+<section class="sec" id="cta-end" style="background:radial-gradient(ellipse at center bottom,rgba(232,74,14,.12),transparent 70%),var(--dark)">
+  <div class="sec-bg"><img src="https://images.pexels.com/photos/33630383/pexels-photo-33630383.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=2000" alt="غروب ساحل"></div>
+  <div class="glow" style="bottom:-200px;left:30%"></div>
+  <div class="inner">
+    <h2 class="ru" style="font-size:clamp(2rem,5vw,3.2rem)">آماده‌اید <span class="hi">کارخانه پوند</span> خودتان را راه‌اندازی کنید؟</h2>
+    <p class="sub ru">همین حالا با مشاوران ارشد اسپادانا تماس بگیرید. اولین قدم شما به‌سوی آزادی مالی، یک تماس ساده است.</p>
+    <div class="ru" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;align-items:center">
+      <a href="contact.html" class="btn-f">درخواست مشاوره رایگان</a>
+      <a href="tel:+989122400138" class="btn-o" style="gap:10px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        <span class="en">۰۹۱۲۲۴۰۰۱۳۸</span>
+      </a>
+    </div>
+    <p class="ru" style="margin-top:18px;font-size:.85rem;color:var(--muted)">دفتر تهران: <span class="en">۰۲۱۸۲۸۰۹۸۳۳</span></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="foot">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a href="#hero" class="brand" style="margin-bottom:6px">
+        <svg viewBox="0 0 40 40" fill="none" width="32" height="32"><rect width="40" height="40" rx="10" fill="#e84a0e"/><path d="M10 28V14l10-6 10 6v14" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 28v-8h8v8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="16" r="2" fill="#fff"/></svg>
+        <div>اسپادانا<small>ESPADANA</small></div>
+      </a>
+      <p>اسپادانا، پلتفرم تخصصی سرمایه‌گذاری ملکی در قبرس شمالی. با حضور دائمی در جزیره و تیمی مجرب، بهترین فرصت‌های تولید ثروت پوندی را در اختیار شما قرار می‌دهیم.</p>
+    </div>
+    <div><h4>دسترسی سریع</h4><ul><li><a href="#hero">صفحه اصلی</a></li><li><a href="properties.html">آرشیو املاک</a></li><li><a href="about.html">درباره ما</a></li><li><a href="contact.html">تماس با ما</a></li></ul></div>
+    <div><h4>مناطق فعال</h4><ul><li><a href="properties.html">کیرنیا (گیرنه)</a></li><li><a href="properties.html">فاماگوستا (سالامیس)</a></li><li><a href="properties.html">اسکله (لانگ‌بیچ)</a></li><li><a href="properties.html">نیکوزیا (لفکوشا)</a></li></ul></div>
+    <div class="foot-ct"><h4>اطلاعات تماس</h4>
+      <p><svg width="14" height="14" viewBox="0 0 24 24" fill="#e84a0e"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg><span class="en">۰۹۱۲۲۴۰۰۱۳۸</span></p>
+      <p><svg width="14" height="14" viewBox="0 0 24 24" fill="#e84a0e"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg><span class="en">۰۲۱۸۲۸۰۹۸۳۳</span></p>
+      <p><svg width="14" height="14" viewBox="0 0 24 24" fill="#e84a0e"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>قبرس شمالی، سالامیس، بعد از دانشگاه، شماره ۴۲</p>
+    </div>
+  </div>
+  <div class="foot-bot">© <span class="en">2026</span> اسپادانا (ESPADANA). تمامی حقوق محفوظ است.</div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+
+<script>
+(function(){
+"use strict";
+
+/* ═══ LOADER ═══ */
+var ldr=document.getElementById("loader"), lb=document.getElementById("lb"), lp=0;
+var li=setInterval(function(){
+  lp+=Math.random()*18+6;
+  if(lp>=100){lp=100;lb.style.width="100%";clearInterval(li);setTimeout(function(){ldr.classList.add("done")},500)}
+  else{lb.style.width=lp+"%"}
+},180);
+
+/* ═══ BG VIDEO ═══ */
+try{
+  var bgVid=document.getElementById("bg-video");
+  var playP=bgVid.play();
+  if(playP!==undefined){playP.catch(function(){/* autoplay blocked, will play on first interaction */
+    document.addEventListener("click",function(){bgVid.play()},{once:true});
+    document.addEventListener("touchstart",function(){bgVid.play()},{once:true});
+  });}
+}catch(e){console.log("BG video error:",e)}
+
+/* ═══ GSAP + ScrollTrigger ═══ */
+gsap.registerPlugin(ScrollTrigger);
+
+/* camera positions per section */
+var cpos=[
+  {x:0,y:0,z:30},{x:-5,y:3,z:25},{x:8,y:-2,z:20},{x:-6,y:5,z:22},
+  {x:3,y:-4,z:18},{x:-3,y:2,z:28},{x:0,y:0,z:30},{x:5,y:-3,z:20},{x:0,y:1,z:35}
+];
+
+var secs=document.querySelectorAll(".sec");
+secs.forEach(function(s,i){
+  var cp=cpos[i]||cpos[0];
+
+  ScrollTrigger.create({
+    trigger:s, start:"top 80%", end:"bottom 20%",
+    onEnter:function(){
+      if(window._camDest) gsap.to(window._camDest,{x:cp.x,y:cp.y,z:cp.z,duration:2,ease:"power2.out"});
+      s.classList.add("vis");
+    },
+    onEnterBack:function(){
+      if(window._camDest) gsap.to(window._camDest,{x:cp.x,y:cp.y,z:cp.z,duration:2,ease:"power2.out"});
+      s.classList.add("vis");
+    },
+    onLeave:function(){s.classList.remove("vis")},
+    onLeaveBack:function(){s.classList.remove("vis")}
+  });
+});
+
+/* reveal elements */
+document.querySelectorAll(".ru,.rl,.rr").forEach(function(el){
+  ScrollTrigger.create({
+    trigger:el, start:"top 88%",
+    onEnter:function(){el.classList.add("v")},
+  });
+});
+
+/* progress bar */
+var pb=document.getElementById("scroll-progress");
+window.addEventListener("scroll",function(){
+  var st=window.scrollY;
+  var dh=document.documentElement.scrollHeight-window.innerHeight;
+  if(dh>0) pb.style.height=(st/dh*100)+"%";
+});
+
+/* nav scroll bg */
+var tn=document.getElementById("topnav");
+window.addEventListener("scroll",function(){
+  tn.classList.toggle("scrolled",window.scrollY>80);
+});
+
+/* counter animation */
+document.querySelectorAll(".n[data-to]").forEach(function(el){
+  ScrollTrigger.create({
+    trigger:el, start:"top 85%", once:true,
+    onEnter:function(){
+      var target=parseInt(el.getAttribute("data-to"));
+      var obj={v:0};
+      gsap.to(obj,{v:target,duration:2,ease:"power2.out",onUpdate:function(){
+        el.textContent=Math.round(obj.v)+"+";
+      }});
+    }
+  });
+});
+
+/* ═══ MOBILE MENU ═══ */
+var ham=document.getElementById("ham");
+var mob=document.getElementById("mob");
+ham.addEventListener("click",function(){
+  ham.classList.toggle("open");
+  mob.classList.toggle("open");
+  document.body.style.overflow=mob.classList.contains("open")?"hidden":"";
+});
+document.querySelectorAll(".mob-l").forEach(function(a){
+  a.addEventListener("click",function(){
+    ham.classList.remove("open");
+    mob.classList.remove("open");
+    document.body.style.overflow="";
+  });
+});
+
+/* ═══ SOUND ═══ */
+var sndOn=false, actx=null, osc1=null, osc2=null, gain=null;
+var sndBtn=document.getElementById("snd-btn");
+sndBtn.addEventListener("click",function(){
+  sndOn=!sndOn;
+  if(sndOn){
+    sndBtn.innerHTML='<svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
+    try{
+      if(!actx){
+        actx=new(window.AudioContext||window.webkitAudioContext)();
+        osc1=actx.createOscillator(); osc2=actx.createOscillator();
+        gain=actx.createGain();
+        var flt=actx.createBiquadFilter();
+        osc1.type="sine"; osc1.frequency.value=80;
+        osc2.type="sine"; osc2.frequency.value=120;
+        flt.type="lowpass"; flt.frequency.value=200;
+        gain.gain.setValueAtTime(0,actx.currentTime);
+        osc1.connect(flt); osc2.connect(flt); flt.connect(gain); gain.connect(actx.destination);
+        osc1.start(); osc2.start();
+      }
+      gain.gain.linearRampToValueAtTime(.05,actx.currentTime+1.5);
+    }catch(e){}
+  }else{
+    sndBtn.innerHTML='<svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
+    if(gain) gain.gain.linearRampToValueAtTime(0,actx.currentTime+.5);
+  }
+});
+
+console.log("%c ESPADANA 🔥 Pound Factory ","background:#e84a0e;color:#fff;font-size:14px;padding:8px 16px;border-radius:4px;font-weight:bold");
+
+})();
+</script>
+
+<!-- ElevenLabs Conversational AI Widget -->
+<elevenlabs-convai agent-id="agent_7001kvx2ky7jebqs414jf8g7dbjb" dir="ltr" style="position:fixed;bottom:20px;right:20px;left:auto;z-index:999;"></elevenlabs-convai>
+<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+<style>
+elevenlabs-convai{position:fixed!important;bottom:20px!important;right:20px!important;left:auto!important;inset-inline-end:20px!important;inset-inline-start:auto!important;z-index:999!important;direction:ltr!important}
+</style>
+
+</body>
+</html>

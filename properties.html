@@ -60,6 +60,19 @@
   <!-- ═══ FILTER + GRID ═══ -->
   <section class="section">
     <div class="container">
+      <div class="source-panel fade-up">
+        <div class="source-panel-head">
+          <div>
+            <div class="accent-line"></div>
+            <h2>منابع زنده طرف قرارداد</h2>
+            <p>این بخش از URL سایت‌های مرجع تغذیه می‌شود؛ با تغییر URL در فایل تنظیمات، مقصدها بدون تغییر HTML به‌روزرسانی می‌شوند.</p>
+          </div>
+          <span class="source-status">AUTO UPDATE BY URL</span>
+        </div>
+        <div class="source-grid" id="partner-source-grid"></div>
+        <p class="remote-note">اگر سایت مرجع اجازه خواندن مستقیم داخل مرورگر را ندهد، لینک زنده همان منبع نمایش داده می‌شود. برای استخراج کامل و خودکار کارت‌ها، باید API/RSS یا دسترسی مجاز از همان سایت‌ها داشته باشیم.</p>
+      </div>
+
       <!-- Filter Bar -->
       <div class="filter-bar fade-up">
         <div class="filter-group">
@@ -165,6 +178,7 @@
   </footer>
 
   <script src="assets/data.js"></script>
+  <script src="assets/remote-sources.js"></script>
   <script src="assets/script.js"></script>
   <script src="assets/data-loader.js"></script>
 

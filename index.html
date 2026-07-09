@@ -32,8 +32,8 @@ img{max-width:100%;display:block}
 .load-text{color:var(--muted);font-size:.82rem;margin-top:16px}
 
 /* ═══ BG VIDEO ═══ */
-#bg-video{position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%;object-fit:cover;opacity:.62;filter:saturate(1.05)}
-#bg-video-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(160deg,rgba(10,10,10,.45),rgba(10,10,10,.62) 55%,rgba(10,10,10,.85))}
+#bg-video{position:fixed;inset:0;z-index:0;pointer-events:none;width:100%;height:100%;object-fit:cover;opacity:.58;filter:saturate(1.1) contrast(1.08)}
+#bg-video-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(160deg,rgba(1,7,10,.5),rgba(3,24,30,.56) 45%,rgba(1,7,10,.88)),radial-gradient(circle at 50% 18%,rgba(232,74,14,.08),transparent 42%)}
 
 /* ═══ PROGRESS BAR ═══ */
 #scroll-progress{position:fixed;top:0;right:0;z-index:200;width:3px;height:0%;background:linear-gradient(to bottom,var(--fire),var(--gold));transition:height .05s}
@@ -66,6 +66,8 @@ img{max-width:100%;display:block}
 
 /* ═══ SECTIONS ═══ */
 .sec{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.video-surface{background:rgba(1,7,10,.74);backdrop-filter:blur(2px)}
+.video-surface::before{content:'';position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,rgba(1,7,10,.78),rgba(3,24,30,.58),rgba(1,7,10,.82));pointer-events:none}
 .sec-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
 .sec-bg img{width:100%;height:100%;object-fit:cover;transition:transform 10s ease-out;transform:scale(1.18)}
 .sec.vis .sec-bg img{transform:scale(1.0)}
@@ -80,6 +82,15 @@ h1{font-size:clamp(2.2rem,5.5vw,4rem)}
 h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 .hi{color:var(--fire);text-shadow:0 0 40px rgba(232,74,14,.35)}
 .sub{color:#b0a898;font-size:clamp(.92rem,1.2vw,1.1rem);line-height:2;max-width:680px;margin:0 auto 32px}
+#hero .gold-flow .gold-word{display:inline-block;color:inherit;text-shadow:inherit;animation:goldFill .9s ease forwards;animation-delay:0ms;animation-play-state:paused}
+#hero.gold-active .gold-flow .gold-word{animation-play-state:running}
+#hero .gold-flow .hi .gold-word{color:inherit}
+#hero .gold-flow .en.gold-word,#hero .gold-flow .en .gold-word{font-family:var(--font-en);direction:ltr}
+@keyframes goldFill{
+  0%,38%{color:inherit;text-shadow:inherit;filter:none}
+  72%{color:#ffd36a;text-shadow:0 0 12px rgba(255,200,87,.62),0 0 30px rgba(255,168,0,.34);filter:saturate(1.08)}
+  100%{color:#ffc857;text-shadow:0 0 8px rgba(255,200,87,.82),0 0 22px rgba(255,168,0,.62),0 0 48px rgba(232,74,14,.38);filter:saturate(1.18)}
+}
 
 .stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;margin:40px 0}
 .stats .it{text-align:center}
@@ -106,7 +117,7 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 .split-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to left,rgba(10,10,10,.95) 0%,transparent 55%);z-index:2;pointer-events:none}
 /* Video in split */
 .split-video{position:relative;overflow:hidden}
-.split-video iframe{position:absolute;top:50%;left:50%;width:180%;height:180%;transform:translate(-50%,-50%);border:none;pointer-events:none;z-index:1}
+.split-video video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border:none;pointer-events:none;z-index:1;filter:saturate(1.08) contrast(1.05)}
 .split-txt{padding:60px 64px;max-width:620px}
 .split-txt h2{text-align:right;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.95),0 6px 28px rgba(0,0,0,.75),0 0 46px rgba(255,200,87,.3)}
 .split-txt h2 .hi{color:var(--gold);text-shadow:0 2px 6px rgba(0,0,0,.95),0 0 30px rgba(255,200,87,.65),0 0 60px rgba(255,200,87,.35)}
@@ -166,7 +177,7 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 .rbox span{color:#e9e1d3;font-size:.76rem;line-height:1.6;text-shadow:0 1px 3px rgba(0,0,0,.85)}
 
 /* ═══ FOOTER ═══ */
-.foot{background:#060606;padding:60px 0 0;border-top:1px solid rgba(255,255,255,.04)}
+.foot{background:rgba(1,7,10,.86);padding:60px 0 0;border-top:1px solid rgba(255,255,255,.04);backdrop-filter:blur(6px)}
 .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:40px;max-width:1200px;margin:0 auto;padding:0 36px 40px;border-bottom:1px solid rgba(255,255,255,.05)}
 .foot-brand p{color:#e9e3d8;font-size:.83rem;line-height:1.9;margin-top:14px;text-shadow:0 0 18px rgba(255,200,87,.12)}
 .foot h4{font-size:.9rem;font-weight:700;margin-bottom:16px;color:#fff;text-shadow:0 0 20px rgba(255,200,87,.2)}
@@ -324,7 +335,9 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 <!-- 3 ▸ POUND FACTORY (Split) -->
 <section class="sec split" id="factory">
   <div class="split-img split-video">
-    <iframe src="https://www.youtube.com/embed/58Q8Gbmx3-0?autoplay=1&mute=1&loop=1&playlist=58Q8Gbmx3-0&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1" title="Counting British Pounds" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <video autoplay muted loop playsinline preload="metadata" poster="https://images.pexels.com/photos/4386158/pexels-photo-4386158.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=900&w=1200" aria-label="Counting British Pounds">
+      <source src="assets/video/pound.mp4" type="video/mp4">
+    </video>
   </div>
   <div class="split-txt">
     <div class="tag rl">مدل انحصاری اسپادانا</div>
@@ -397,7 +410,7 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 </section>
 
 <!-- 6 ▸ STEPS -->
-<section class="sec" id="steps-s" style="background:#0d0d0d;padding:100px 0">
+<section class="sec video-surface" id="steps-s" style="padding:100px 0">
   <div class="inner inner-wide">
     <div class="tag ru">از رؤیا تا کلید</div>
     <h2 class="ru">مراحل همکاری با <span class="hi">اسپادانا</span></h2>
@@ -412,7 +425,7 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 </section>
 
 <!-- 7 ▸ PARTNERS -->
-<section class="sec" style="min-height:auto;padding:50px 0;background:var(--dark);border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)">
+<section class="sec video-surface" style="min-height:auto;padding:50px 0;border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)">
   <div class="inner inner-wide">
     <p style="color:var(--muted);font-size:.8rem;text-align:center;margin-bottom:18px">منابع و سایت‌های رفرنس بازار املاک قبرس شمالی</p>
     <div class="partners">
@@ -424,7 +437,7 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 </section>
 
 <!-- 8 ▸ TESTIMONIALS -->
-<section class="sec" id="reviews" style="padding:100px 0;background:#0a0a0a">
+<section class="sec video-surface" id="reviews" style="padding:100px 0">
   <div class="sec-bg"><img src="https://images.pexels.com/photos/14909610/pexels-photo-14909610.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=2000" alt="مارینا" style="opacity:.06"></div>
   <div class="inner inner-wide">
     <div class="tag ru">صدای مشتریان</div>
@@ -502,7 +515,7 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 var ldr=document.getElementById("loader"), lb=document.getElementById("lb"), lp=0;
 var li=setInterval(function(){
   lp+=Math.random()*18+6;
-  if(lp>=100){lp=100;lb.style.width="100%";clearInterval(li);setTimeout(function(){ldr.classList.add("done")},500)}
+if(lp>=100){lp=100;lb.style.width="100%";clearInterval(li);setTimeout(function(){ldr.classList.add("done");startHeroGoldFlow()},500)}
   else{lb.style.width=lp+"%"}
 },180);
 
@@ -515,6 +528,61 @@ try{
     document.addEventListener("touchstart",function(){bgVid.play()},{once:true});
   });}
 }catch(e){console.log("BG video error:",e)}
+
+/* ═══ HERO GOLD WORD FILL ═══ */
+function wrapGoldWords(root,startIndex){
+  var index=startIndex||0;
+  function walk(node){
+    if(node.nodeType===3){
+      var text=node.nodeValue;
+      if(!text.trim()) return;
+      var frag=document.createDocumentFragment();
+      text.split(/(\s+)/).forEach(function(part){
+        if(!part) return;
+        if(/\s+/.test(part)){frag.appendChild(document.createTextNode(part));return}
+        var span=document.createElement("span");
+        span.className="gold-word";
+        index++;
+        span.textContent=part;
+        frag.appendChild(span);
+      });
+      node.parentNode.replaceChild(frag,node);
+      return;
+    }
+    if(node.nodeType!==1 || node.classList.contains("gold-word")) return;
+    Array.from(node.childNodes).forEach(walk);
+  }
+  walk(root);
+  return index;
+}
+function initHeroGoldFlow(){
+  var title=document.querySelector("#hero h1");
+  var sub=document.querySelector("#hero .sub");
+  if(!title||!sub) return;
+  [title,sub].forEach(function(el){el.classList.add("gold-flow")});
+  var i=0;
+  i=wrapGoldWords(title,i);
+  wrapGoldWords(sub,i);
+  orderHeroGoldWords();
+}
+function orderHeroGoldWords(){
+  var words=Array.from(document.querySelectorAll("#hero .gold-flow .gold-word"));
+  if(!words.length) return;
+  words.sort(function(a,b){
+    var ar=a.getBoundingClientRect(), br=b.getBoundingClientRect();
+    if(Math.abs(ar.top-br.top)>8) return ar.top-br.top;
+    return br.right-ar.right;
+  });
+  var spread=Math.max(0,3000-900);
+  var step=words.length>1?spread/(words.length-1):0;
+  words.forEach(function(word,i){word.style.animationDelay=Math.round(i*step)+"ms"});
+}
+function startHeroGoldFlow(){
+  var hero=document.getElementById("hero");
+  if(hero) hero.classList.add("gold-active");
+}
+initHeroGoldFlow();
+if(document.fonts&&document.fonts.ready){document.fonts.ready.then(orderHeroGoldWords)}
 
 /* ═══ GSAP + ScrollTrigger ═══ */
 gsap.registerPlugin(ScrollTrigger);

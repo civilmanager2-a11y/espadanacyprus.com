@@ -1,6 +1,7 @@
 (function () {
   "use strict";
 
+  var assetVersion = "?v=20260804-1935";
   var projects = [
     {
       id: "cyprus-construction",
@@ -97,7 +98,7 @@
     var total = String(project.images.length).padStart(2, "0");
 
     mainImage.innerHTML =
-      '<img src="' + project.images[currentImage] + '" alt="تصویر ' + (currentImage + 1) + " پروژه " + project.name + '" draggable="false" decoding="async">' +
+      '<img src="' + project.images[currentImage] + assetVersion + '" alt="تصویر ' + (currentImage + 1) + " پروژه " + project.name + '" draggable="false" decoding="async">' +
       '<span class="gp-image-caption">' + number + " / " + total + " · " + project.name + "</span>";
 
     window.requestAnimationFrame(function () {
@@ -131,7 +132,7 @@
       button.dataset.label = "VIEW " + String(indexValue + 1).padStart(2, "0");
       button.setAttribute("aria-label", "نمایش تصویر " + (indexValue + 1) + " پروژه " + project.name);
       button.setAttribute("aria-pressed", "false");
-      button.innerHTML = '<img src="' + source + '" alt="" draggable="false" loading="lazy" decoding="async">';
+      button.innerHTML = '<img src="' + source + assetVersion + '" alt="" draggable="false" loading="lazy" decoding="async">';
       button.addEventListener("click", function () { showImage(indexValue); });
       thumbs.appendChild(button);
     });

@@ -88,6 +88,13 @@ h1{font-size:clamp(2.2rem,5.5vw,4rem)}
 h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 .hi{color:var(--fire);text-shadow:0 0 40px rgba(232,74,14,.35)}
 .sub{color:#b0a898;font-size:clamp(.92rem,1.2vw,1.1rem);line-height:2;max-width:680px;margin:0 auto 32px}
+.hero-gold-type{position:relative}
+.hero-gold-base,.hero-gold-layer{display:block}
+.hero-gold-layer{position:absolute;inset:0;color:var(--gold);text-shadow:0 0 18px rgba(255,200,87,.28);clip-path:inset(0 100% 0 0);pointer-events:none;will-change:clip-path}
+.hero-gold-layer .en{color:inherit!important}
+.hero-gold-type.is-typing .hero-gold-layer{animation:hero-gold-type 4.2s steps(64,end) .85s forwards}
+@keyframes hero-gold-type{to{clip-path:inset(0 0 0 0)}}
+@media(prefers-reduced-motion:reduce){.hero-gold-layer{clip-path:inset(0 0 0 0)!important}.hero-gold-type.is-typing .hero-gold-layer{animation:none}}
 
 .stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;margin:40px 0}
 .stats .it{text-align:center}
@@ -592,9 +599,26 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 
 /* ═══ LOADER ═══ */
 var ldr=document.getElementById("loader"), lb=document.getElementById("lb"), lp=0;
+function startHeroGoldTyping(){
+  var heroText=document.querySelector("#hero .sub");
+  if(!heroText||heroText.classList.contains("is-typing")) return;
+  var originalMarkup=heroText.innerHTML;
+  var baseLayer=document.createElement("span");
+  var goldLayer=document.createElement("span");
+  baseLayer.className="hero-gold-base";
+  goldLayer.className="hero-gold-layer";
+  baseLayer.innerHTML=originalMarkup;
+  goldLayer.innerHTML=originalMarkup;
+  goldLayer.setAttribute("aria-hidden","true");
+  heroText.textContent="";
+  heroText.classList.add("hero-gold-type");
+  heroText.appendChild(baseLayer);
+  heroText.appendChild(goldLayer);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){heroText.classList.add("is-typing")})});
+}
 var li=setInterval(function(){
   lp+=Math.random()*18+6;
-  if(lp>=100){lp=100;lb.style.width="100%";clearInterval(li);setTimeout(function(){ldr.classList.add("done")},500)}
+  if(lp>=100){lp=100;lb.style.width="100%";clearInterval(li);setTimeout(function(){ldr.classList.add("done");startHeroGoldTyping()},500)}
   else{lb.style.width=lp+"%"}
 },180);
 

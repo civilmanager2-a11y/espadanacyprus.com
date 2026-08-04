@@ -90,11 +90,12 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 .sub{color:#b0a898;font-size:clamp(.92rem,1.2vw,1.1rem);line-height:2;max-width:680px;margin:0 auto 32px}
 .hero-gold-type{position:relative}
 .hero-gold-base,.hero-gold-layer{display:block}
-.hero-gold-layer{position:absolute;inset:0;color:var(--gold);text-shadow:0 0 18px rgba(255,200,87,.28);clip-path:inset(0 100% 0 0);pointer-events:none;will-change:clip-path}
+.hero-gold-layer{position:absolute;inset:0;color:inherit;pointer-events:none}
 .hero-gold-layer .en{color:inherit!important}
-.hero-gold-type.is-typing .hero-gold-layer{animation:hero-gold-type 4.2s steps(64,end) .85s forwards}
-@keyframes hero-gold-type{to{clip-path:inset(0 0 0 0)}}
-@media(prefers-reduced-motion:reduce){.hero-gold-layer{clip-path:inset(0 0 0 0)!important}.hero-gold-type.is-typing .hero-gold-layer{animation:none}}
+.hero-gold-word{color:transparent;text-shadow:none}
+.hero-gold-type.is-typing .hero-gold-word{animation:hero-gold-word .22s ease-out var(--word-delay) forwards}
+@keyframes hero-gold-word{to{color:var(--gold);text-shadow:0 0 18px rgba(255,200,87,.28)}}
+@media(prefers-reduced-motion:reduce){.hero-gold-word{color:var(--gold)!important;text-shadow:0 0 18px rgba(255,200,87,.28);animation:none!important}}
 
 .stats{display:flex;gap:48px;justify-content:center;flex-wrap:wrap;margin:40px 0}
 .stats .it{text-align:center}
@@ -610,6 +611,23 @@ function startHeroGoldTyping(){
   baseLayer.innerHTML=originalMarkup;
   goldLayer.innerHTML=originalMarkup;
   goldLayer.setAttribute("aria-hidden","true");
+  var textWalker=document.createTreeWalker(goldLayer,NodeFilter.SHOW_TEXT);
+  var textNodes=[],currentNode,wordOrder=0;
+  while((currentNode=textWalker.nextNode())) textNodes.push(currentNode);
+  textNodes.forEach(function(textNode){
+    var fragment=document.createDocumentFragment();
+    textNode.nodeValue.split(/(\s+)/).forEach(function(part){
+      if(!part) return;
+      if(/^\s+$/.test(part)){fragment.appendChild(document.createTextNode(part));return;}
+      var word=document.createElement("span");
+      word.className="hero-gold-word";
+      word.style.setProperty("--word-delay",(.85+wordOrder*.13)+"s");
+      word.textContent=part;
+      wordOrder++;
+      fragment.appendChild(word);
+    });
+    textNode.parentNode.replaceChild(fragment,textNode);
+  });
   heroText.textContent="";
   heroText.classList.add("hero-gold-type");
   heroText.appendChild(baseLayer);

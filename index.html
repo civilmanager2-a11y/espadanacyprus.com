@@ -114,7 +114,7 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 .split-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to left,rgba(10,10,10,.95) 0%,transparent 55%);z-index:2;pointer-events:none}
 /* Video in split */
 .split-video{position:relative;overflow:hidden}
-.split-video iframe{position:absolute;top:50%;left:50%;width:180%;height:180%;transform:translate(-50%,-50%);border:none;pointer-events:none;z-index:1}
+.split-video video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;pointer-events:none;z-index:1}
 .split-txt{padding:60px 64px;max-width:620px}
 .split-txt h2{text-align:right;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.95),0 6px 28px rgba(0,0,0,.75),0 0 46px rgba(255,200,87,.3)}
 .split-txt h2 .hi{color:var(--gold);text-shadow:0 2px 6px rgba(0,0,0,.95),0 0 30px rgba(255,200,87,.65),0 0 60px rgba(255,200,87,.35)}
@@ -335,7 +335,9 @@ h2{font-size:clamp(1.8rem,4vw,2.8rem)}
 <!-- 3 ▸ POUND FACTORY (Split) -->
 <section class="sec split" id="factory">
   <div class="split-img split-video">
-    <iframe src="https://www.youtube.com/embed/58Q8Gbmx3-0?autoplay=1&mute=1&loop=1&playlist=58Q8Gbmx3-0&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1" title="Counting British Pounds" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <video autoplay muted loop playsinline preload="metadata" poster="https://images.pexels.com/photos/4386158/pexels-photo-4386158.jpeg?auto=compress&amp;cs=tinysrgb&amp;fit=crop&amp;h=900&amp;w=1200" aria-label="شمارش اسکناس‌های پوند بریتانیا">
+      <source src="assets/video/pound.mp4" type="video/mp4">
+    </video>
   </div>
   <div class="split-txt">
     <div class="tag rl">مدل انحصاری اسپادانا</div>
@@ -686,33 +688,107 @@ document.querySelectorAll(".mob-l").forEach(function(a){
   });
 });
 
-/* ═══ SOUND ═══ */
-var sndOn=false, actx=null, osc1=null, osc2=null, gain=null;
+/* ═══ MONEY COUNTER SOUND ═══
+   Browsers block autoplay. The counter starts on the visitor's first gesture,
+   then stops permanently when they scroll down or activate the chat widget. */
+var sndOn=false, actx=null, counterTimer=null, soundJourneyEnded=false;
 var sndBtn=document.getElementById("snd-btn");
-sndBtn.addEventListener("click",function(){
-  sndOn=!sndOn;
-  if(sndOn){
-    sndBtn.innerHTML='<svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
-    try{
-      if(!actx){
-        actx=new(window.AudioContext||window.webkitAudioContext)();
-        osc1=actx.createOscillator(); osc2=actx.createOscillator();
-        gain=actx.createGain();
-        var flt=actx.createBiquadFilter();
-        osc1.type="sine"; osc1.frequency.value=80;
-        osc2.type="sine"; osc2.frequency.value=120;
-        flt.type="lowpass"; flt.frequency.value=200;
-        gain.gain.setValueAtTime(0,actx.currentTime);
-        osc1.connect(flt); osc2.connect(flt); flt.connect(gain); gain.connect(actx.destination);
-        osc1.start(); osc2.start();
-      }
-      gain.gain.linearRampToValueAtTime(.05,actx.currentTime+1.5);
-    }catch(e){}
-  }else{
-    sndBtn.innerHTML='<svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
-    if(gain) gain.gain.linearRampToValueAtTime(0,actx.currentTime+.5);
+var soundOnIcon='<svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
+var soundOffIcon='<svg viewBox="0 0 24 24"><path fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
+
+function setSoundButton(on){
+  sndBtn.innerHTML=on?soundOnIcon:soundOffIcon;
+  sndBtn.setAttribute("aria-pressed",on?"true":"false");
+  sndBtn.setAttribute("aria-label",on?"قطع صدای پول شمار":"صدای پول شمار");
+}
+
+function moneyCounterTick(){
+  if(!sndOn||!actx) return;
+  var now=actx.currentTime;
+  var motor=actx.createOscillator();
+  var motorGain=actx.createGain();
+  motor.type="square";
+  motor.frequency.setValueAtTime(980+Math.random()*260,now);
+  motor.frequency.exponentialRampToValueAtTime(620,now+.035);
+  motorGain.gain.setValueAtTime(.0001,now);
+  motorGain.gain.exponentialRampToValueAtTime(.045,now+.004);
+  motorGain.gain.exponentialRampToValueAtTime(.0001,now+.045);
+  motor.connect(motorGain); motorGain.connect(actx.destination);
+  motor.start(now); motor.stop(now+.05);
+
+  var samples=Math.floor(actx.sampleRate*.022);
+  var buffer=actx.createBuffer(1,samples,actx.sampleRate);
+  var data=buffer.getChannelData(0);
+  for(var i=0;i<samples;i++) data[i]=(Math.random()*2-1)*(1-i/samples);
+  var paper=actx.createBufferSource();
+  var paperFilter=actx.createBiquadFilter();
+  var paperGain=actx.createGain();
+  paper.buffer=buffer;
+  paperFilter.type="bandpass"; paperFilter.frequency.value=2400; paperFilter.Q.value=.8;
+  paperGain.gain.value=.12;
+  paper.connect(paperFilter); paperFilter.connect(paperGain); paperGain.connect(actx.destination);
+  paper.start(now);
+}
+
+function startMoneyCounter(){
+  if(sndOn||soundJourneyEnded) return;
+  try{
+    if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==="suspended") actx.resume();
+    sndOn=true;
+    setSoundButton(true);
+    moneyCounterTick();
+    counterTimer=window.setInterval(moneyCounterTick,72);
+  }catch(e){
+    sndOn=false;
+    setSoundButton(false);
+    console.warn("Money counter audio could not start",e);
   }
+}
+
+function stopMoneyCounter(endJourney){
+  sndOn=false;
+  if(endJourney) soundJourneyEnded=true;
+  if(counterTimer){ window.clearInterval(counterTimer); counterTimer=null; }
+  setSoundButton(false);
+  if(actx&&actx.state==="running") actx.suspend().catch(function(){});
+}
+
+function isChatInteraction(event){
+  return event.composedPath().some(function(node){
+    return node&&node.tagName==="ELEVENLABS-CONVAI";
+  });
+}
+
+sndBtn.addEventListener("click",function(event){
+  event.stopPropagation();
+  if(soundJourneyEnded) return;
+  if(sndOn) stopMoneyCounter(false); else startMoneyCounter();
 });
+
+/* Start only after a browser-approved user gesture. */
+function startOnFirstGesture(event){
+  if(isChatInteraction(event)){
+    stopMoneyCounter(true);
+    return;
+  }
+  if(!sndBtn.contains(event.target)) startMoneyCounter();
+}
+document.addEventListener("pointerdown",startOnFirstGesture,{capture:true,once:true});
+document.addEventListener("keydown",startOnFirstGesture,{capture:true,once:true});
+
+/* Moving down the page ends the intro sound. */
+var soundLastScrollY=window.scrollY;
+window.addEventListener("scroll",function(){
+  var currentScrollY=window.scrollY;
+  if(currentScrollY>soundLastScrollY+2) stopMoneyCounter(true);
+  soundLastScrollY=currentScrollY;
+},{passive:true});
+
+/* ElevenLabs events are retargeted to the custom-element host. */
+document.addEventListener("pointerdown",function(event){
+  if(isChatInteraction(event)) stopMoneyCounter(true);
+},true);
 
 console.log("%c ESPADANA 🔥 Pound Factory ","background:#e84a0e;color:#fff;font-size:14px;padding:8px 16px;border-radius:4px;font-weight:bold");
 

@@ -9,11 +9,6 @@
    ═══════════════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('partner-source-grid')) {
-    renderPartnerSources('partner-source-grid');
-    hydrateSourceStatus('partner-source-grid');
-  }
-
   // Home page: featured properties
   if (document.getElementById('featured-properties')) {
     renderProperties('featured-properties', { featured: true }, 6);

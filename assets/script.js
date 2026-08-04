@@ -65,9 +65,6 @@ function formatPrice(price) {
 /* ── Build Property Card HTML ─────────────────────── */
 function buildPropertyCard(prop) {
   const bedroomText = prop.bedrooms === 0 ? '—' : prop.bedrooms;
-  const sourceUrl = prop.source_url || '#';
-  const linkTarget = prop.source_url ? ' target="_blank" rel="noopener"' : '';
-  const linkText = prop.source_url ? 'مشاهده در منبع' : 'جزئیات بیشتر';
   return `
     <div class="property-card fade-up" data-region="${prop.region}" data-type="${prop.type}">
       <div class="property-img">
@@ -92,53 +89,14 @@ function buildPropertyCard(prop) {
           <div class="property-price">
             <span class="en-num">€${formatPrice(prop.price_eur)}</span>
           </div>
-          <a href="${sourceUrl}" class="property-link"${linkTarget} onclick="${prop.source_url ? '' : "event.preventDefault(); alert('برای اطلاعات بیشتر با شماره ۰۹۱۲۲۴۰۰۱۳۸ تماس بگیرید.')"}">
-            ${linkText}
+          <a href="#" class="property-link" onclick="event.preventDefault(); alert('برای اطلاعات بیشتر با شماره ۰۹۱۲۲۴۰۰۱۳۸ تماس بگیرید.')">
+            جزئیات بیشتر
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/></svg>
           </a>
         </div>
       </div>
     </div>
   `;
-}
-
-/* ── Partner URL cards ───────────────────────────── */
-function renderPartnerSources(containerId) {
-  const container = document.getElementById(containerId);
-  const sources = window.ESPADANA_REMOTE_SOURCES || [];
-  if (!container || !sources.length) return;
-
-  container.innerHTML = sources.map(source => `
-    <article class="source-card" data-source="${source.id}">
-      <div>
-        <strong>${source.label}</strong>
-        <p>${source.note}</p>
-      </div>
-      <div>
-        <span class="source-status">URL LIVE SOURCE</span>
-        <a href="${source.listingUrl}" target="_blank" rel="noopener">مشاهده فایل‌های زنده ←</a>
-      </div>
-    </article>
-  `).join('');
-}
-
-async function hydrateSourceStatus(containerId) {
-  const container = document.getElementById(containerId);
-  const sources = window.ESPADANA_REMOTE_SOURCES || [];
-  if (!container || !sources.length) return;
-
-  await Promise.all(sources.map(async source => {
-    const card = container.querySelector(`[data-source="${source.id}"]`);
-    const status = card ? card.querySelector('.source-status') : null;
-    if (!status) return;
-
-    try {
-      await fetch(source.listingUrl, { mode: 'cors', cache: 'no-store' });
-      status.textContent = 'LIVE FETCH ENABLED';
-    } catch (error) {
-      status.textContent = 'LIVE LINK READY';
-    }
-  }));
 }
 
 /* ── Render Properties into a container ───────────── */

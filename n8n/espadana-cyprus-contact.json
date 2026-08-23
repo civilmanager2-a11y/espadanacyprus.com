@@ -1,0 +1,187 @@
+{
+  "id": "espadanaCyprusContact01",
+  "name": "فرم تماس اسپادانا قبرس — ثبت متقاضی",
+  "active": false,
+  "nodes": [
+    {
+      "id": "5cd2d8e7-97b9-40d9-89fd-13c90e7f75e1",
+      "name": "Cyprus Contact Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "espadana-cyprus-contact",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "webhookId": "03f0197c-9e52-468c-b789-c010f92e2d4f"
+    },
+    {
+      "id": "8cb9db14-6d48-4772-bf6b-b2b5a926f29b",
+      "name": "Prepare Cyprus Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [240, 0],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cyprus-name",
+              "name": "نام و نام خانوادگی",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "cyprus-phone",
+              "name": "شماره تماس",
+              "value": "={{ $json.body.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "cyprus-region",
+              "name": "منطقه مورد علاقه",
+              "value": "={{ $json.body.region || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "cyprus-budget",
+              "name": "بودجه تقریبی (یورو)",
+              "value": "={{ $json.body.budget || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "cyprus-message",
+              "name": "توضیحات تکمیلی",
+              "value": "={{ $json.body.message || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "df45aa58-e725-4d03-8dc5-6f7b8832499e",
+      "name": "Save Cyprus Lead",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [500, 0],
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1xLxVYcjUvLht8STAv85PyUZ_rVKH1AXJQ1GZ-M0A0dA",
+          "cachedResultName": "EspadanaCyprus"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "متقاضی قبرس"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "نام و نام خانوادگی": "={{ $json['نام و نام خانوادگی'] }}",
+            "شماره تماس": "={{ $json['شماره تماس'] }}",
+            "منطقه مورد علاقه": "={{ $json['منطقه مورد علاقه'] }}",
+            "بودجه تقریبی (یورو)": "={{ $json['بودجه تقریبی (یورو)'] }}",
+            "توضیحات تکمیلی": "={{ $json['توضیحات تکمیلی'] }}"
+          },
+          "schema": [
+            {
+              "id": "نام و نام خانوادگی",
+              "displayName": "نام و نام خانوادگی",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "شماره تماس",
+              "displayName": "شماره تماس",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "منطقه مورد علاقه",
+              "displayName": "منطقه مورد علاقه",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "بودجه تقریبی (یورو)",
+              "displayName": "بودجه تقریبی (یورو)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "توضیحات تکمیلی",
+              "displayName": "توضیحات تکمیلی",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "BNuPVQ6wi97lTxx0",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Cyprus Contact Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Cyprus Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Cyprus Data": {
+      "main": [
+        [
+          {
+            "node": "Save Cyprus Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

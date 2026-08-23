@@ -154,13 +154,45 @@ function initContactForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const success = document.getElementById('form-success');
-    if (success) {
+    const error = document.getElementById('form-error');
+    const submit = form.querySelector('button[type="submit"]');
+    const originalButtonContent = submit.innerHTML;
+
+    success?.classList.remove('show');
+    if (error) error.style.display = 'none';
+    submit.disabled = true;
+    submit.textContent = 'در حال ارسال درخواست...';
+
+    const data = new FormData(form);
+    const payload = {
+      name: String(data.get('name') || '').trim(),
+      phone: String(data.get('phone') || '').trim(),
+      region: String(data.get('region') || '').trim(),
+      budget: String(data.get('budget') || '').trim(),
+      message: String(data.get('message') || '').trim(),
+    };
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+
       success.classList.add('show');
       form.reset();
       setTimeout(() => success.classList.remove('show'), 5000);
+    } catch (requestError) {
+      console.error('[contact-form] submission failed', requestError);
+      if (error) error.style.display = 'block';
+    } finally {
+      submit.disabled = false;
+      submit.innerHTML = originalButtonContent;
     }
   });
 }
